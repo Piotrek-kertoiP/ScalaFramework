@@ -1,0 +1,51 @@
+<configuration>
+    <appender name="ConsoleTextAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-5level] [%d{HH:mm:ss.SSS}] [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ConsoleJsonAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <logLevel>
+                    <fieldName>severity</fieldName>
+                </logLevel>
+                <timestamp>
+                    <fieldName>time</fieldName>
+                    <pattern>HH:mm:ss.SSS</pattern>
+                </timestamp>
+                <loggerName>
+                    <fieldName>logger</fieldName>
+                </loggerName>
+                <threadName>
+                    <fieldName>thread</fieldName>
+                </threadName>
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+                <stackTrace>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>10</maxDepthPerThrowable>
+                        <maxLength>2048</maxLength>
+                        <shortenedClassNameLength>20</shortenedClassNameLength>
+                        <exclude>sun\.reflect\..*\.invoke.*</exclude>
+                        <exclude>net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+                    </throwableConverter>
+                    <fieldName>stackTrace</fieldName>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- In this section you can declare exceptions - loggers below will print logs on different level -->
+    <logger name="metrics_influxdb" level="INFO"/>
+
+    <!-- In this section proper appender and log level for all loggers (except the ones mentioned in exceptions section)
+    are bound. You can easily make this section configurable by injecting values of environment variables and setting
+    default values.
+    For example: <root level="${LOGBACK_LOG_LEVEL_SANDBOX:-INFO}"> -->
+    <root level="${LOGBACK_LOG_LEVEL_SANDBOX:-DEBUG}">
+        <appender-ref ref="${LOGBACK_APPENDER_SANDBOX:-ConsoleJsonAppender}"/>
+    </root>
+</configuration>
