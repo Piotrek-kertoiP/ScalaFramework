@@ -19,7 +19,6 @@ scalacOptions ++= Seq(
   "-Ywarn-numeric-widen",
   "-Ywarn-unused:_"
 )
-Compile / console / scalacOptions --= Seq("-Ywarn-unused:_", "-Xfatal-warnings")
 
 libraryDependencies ++= Dependencies.all
 // Logging bridges - 3rd party modules use loggers other than slf4j
@@ -36,9 +35,7 @@ libraryDependencies ++= Seq(
 )
 
 // Wartremover
-Compile / compile / wartremoverErrors ++= Wartremover.defaultWarts
-// exclude for protobuf
-wartremoverExcluded ++= (Compile / managedSourceDirectories).value
+wartremoverErrors ++= Wartremover.defaultWarts
 
 // Scalastyle
 scalastyleConfig := file("project/scalastyle-config.xml")
