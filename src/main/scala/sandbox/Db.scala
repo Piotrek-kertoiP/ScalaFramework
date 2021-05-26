@@ -7,7 +7,7 @@ import doobie.util.ExecutionContexts
 import sandbox.Config.Sandbox.Database._
 import org.flywaydb.core.Flyway
 
-class Db {
+object Db {
 
   val connString = s"$jdbcPrefix$host:$port/$name"
 

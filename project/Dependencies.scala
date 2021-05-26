@@ -29,6 +29,7 @@ object Dependencies {
     "com.fasterxml.jackson.core"    % "jackson-databind"                  % "2.11.2",
     "org.codehaus.janino"           % "janino"                            % "3.1.2",
     "org.slf4j"                     % "slf4j-api"                         % "1.7.30",
+    "org.slf4j"                     % "slf4j-simple"                      % "1.7.30",
     "io.kamon"                     %% "kamon-bundle"                      % "2.1.4",
     "io.kamon"                     %% "kamon-prometheus"                  % "2.1.4",
     "io.circe"                     %% "circe-core"                        % circeVsn,

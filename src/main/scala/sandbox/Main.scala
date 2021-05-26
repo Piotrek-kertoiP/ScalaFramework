@@ -17,18 +17,19 @@ import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 object Main extends App with StrictLogging {
-
+  //todo: fix StrictLogging logger + logback
+  println(s"Starting...")
   implicit val system: ActorSystem = ActorSystem(Config.Sandbox.actorSystemName)
   implicit val ec: ExecutionContext = system.dispatcher
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.fromExecutor(Executors.newCachedThreadPool()))
 
-  val db = new Db
   val useDb = false
+  println(s"Implicits done, useDb = $useDb")
 
   if(useDb) {
-    Try(db.initializeDb()) match {
+    Try(Db.initializeDb()) match {
       case Success(_) =>
-        logger.debug("Initialization successful")
+        println("Initialization successful")
       case Failure(ex: FlywayException) =>
         logger.error("Failed fo apply database migrations", ex)
         val _ = system.terminate()
@@ -37,9 +38,9 @@ object Main extends App with StrictLogging {
         val _ = system.terminate()
     }
   } else ()
-
+  println(s"DB done")
   val transactor: Transactor[IO] = if(useDb) {
-    db.provideTransactor().allocated.unsafeRunSync._1
+    Db.provideTransactor().allocated.unsafeRunSync._1
   } else {
     //noinspection ScalaStyle
     Transactor(
@@ -49,10 +50,12 @@ object Main extends App with StrictLogging {
       Strategy.void
     )
   }
+  println("Transactor done")
 
   val customersDb = new CustomersDb
   val customersManager = new CustomersManager(customersDb)(ec, transactor)
   val customersApi = new CustomersApi(customersManager)
+  println("Customers done")
 
   val routes =
     pathPrefix("api") {
@@ -61,12 +64,10 @@ object Main extends App with StrictLogging {
         customersApi.routes
       )
     }
-
+  println("Routes done")
   /* Start any Kafka consumers here - example: kafkaMessageConsumer.processMessages() */
 
 
   /* Bind HTTP routes and start server */
   val _ = Http().newServerAt(Config.Sandbox.host, Config.Sandbox.port).bind(routes)
-
-  logger.debug("siemanko")
 }
