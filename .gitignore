@@ -1,4 +1,5 @@
 notes.txt
 /target
-/project/target
+/project/*
 /.idea
+.DS_Store
